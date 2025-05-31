@@ -5,6 +5,8 @@ module.exports = {
       script: 'server.js',
       env: {
         PORT: 3000,
+        MESSAGE: 'Hello World A',
+        BACKGROUND_COLOR: '#ffdddd' // vermelho claro
       },
     },
     {
@@ -12,6 +14,8 @@ module.exports = {
       script: 'server.js',
       env: {
         PORT: 3001,
+        MESSAGE: 'Hello World B',
+        BACKGROUND_COLOR: '#ddddff' // azul claro
       },
     },
   ],
