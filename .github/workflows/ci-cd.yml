@@ -7,21 +7,17 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
-    - name: Checkout do código
-      uses: actions/checkout@v3
+      - name: Checkout código
+        uses: actions/checkout@v4
 
-    - name: Configurar SSH para acessar o servidor
-      uses: webfactory/ssh-agent@v0.8.0
-      with:
-        ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+      - name: Instalar dependências
+        run: |
+          cd app
+          npm install
 
-    - name: Copiar arquivos para o servidor de produção
-      run: |
-        rsync -avz --delete ./app/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/var/www/hw-devops-test/app/
-
-    - name: Rodar script de deploy no servidor
-      run: |
-        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "bash /var/www/hw-devops-test/scripts/deploy.sh"
+      - name: Rodar aplicação (PM2)
+        run: |
+          cd app
+          pm2 start app.js --name hw-devops-test || pm2 restart hw-devops-test
