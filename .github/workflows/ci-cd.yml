@@ -1,0 +1,27 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    - name: Configurar SSH para acessar o servidor
+      uses: webfactory/ssh-agent@v0.8.0
+      with:
+        ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+    - name: Copiar arquivos para o servidor de produção
+      run: |
+        rsync -avz --delete ./app/ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/var/www/hw-devops-test/app/
+
+    - name: Rodar script de deploy no servidor
+      run: |
+        ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "bash /var/www/hw-devops-test/scripts/deploy.sh"
